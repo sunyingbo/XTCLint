@@ -1,5 +1,9 @@
 【我的Android进阶之旅】Android自定义Lint实践  https://blog.csdn.net/ouyang_peng/article/details/80374867
 
+> 目前这份代码是基于Gradle 2.x 编写的，代码分支为 https://github.com/ouyangpeng/XTCLint/tree/feature/LintBaseOnGradel2.x
+
+> 接下来准备开始基于Gradle 3.x 重新编译自定义Lint插件，写新的Lint自定义规则。 敬请期待！
+
 # 背景
 
 2017年8月份的时候，我在公司开始推广Lint、FindBugs等静态代码检测工具。然后发现系统自带的Lint检测的Issue不满足我们团队内部的特定需求，因此去自定义了部分Lint规则。这个检测运行了大半年，运行良好，团队的代码规范也有了大幅度提升。这个是基于当时Gradle2.x系列写出来的自定义Lint实践总结，过去大半年了，现在将它搬到CSDN博客分享给大家一起学习学习。如果要在Gradle3.x系列使用该自定义规定的话，部分代码都得修改成最新的语法，因此此篇博客的内容请使用Gralde2.x系列编译项目中可以加入，去定义你自己的Lint规则吧。
