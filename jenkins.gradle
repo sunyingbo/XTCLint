@@ -1,0 +1,126 @@
+
+
+/**
+ * 获取Git 分支名
+ *
+ *参考Jenkins git 创建文档： https://wiki.jenkins.io/display/JENKINS/Git+Plugin
+ *   Environment variables
+
+ The git plugin sets several environment variables you can use in your scripts:
+
+ GIT_COMMIT - SHA of the current
+ GIT_BRANCH - Name of the remote repository (defaults to origin), followed by name of the branch currently being used, e.g. "origin/master" or "origin/foo"
+ GIT_LOCAL_BRANCH - Name of the branch on Jenkins. When the "checkout to specific local branch" behavior is configured, the variable is published.  If the behavior is configured as null or **, the property will contain the resulting local branch name sans the remote name.
+ GIT_PREVIOUS_COMMIT - SHA of the previous built commit from the same branch (the current SHA on first build in branch)
+ GIT_PREVIOUS_SUCCESSFUL_COMMIT - SHA of the previous successfully built commit from the same branch.
+ GIT_URL - Repository remote URL
+ GIT_URL_N - Repository remote URLs when there are more than 1 remotes, e.g. GIT_URL_1, GIT_URL_2
+ GIT_AUTHOR_NAME and GIT_COMMITTER_NAME - The name entered if the "Custom user name/e-mail address" behaviour is enabled; falls back to the value entered in the Jenkins system config under "Global Config user.name Value" (if any)
+ GIT_AUTHOR_EMAIL and GIT_COMMITTER_EMAIL - The email entered if the "Custom user name/e-mail address" behaviour is enabled; falls back to the value entered in the Jenkins system config under "Global Config user.email Value" (if any)
+ *
+ *
+ */
+def getGitBranch() {
+    //判断是否处于Jenkins编译环境
+    boolean flag = isInJenkins()
+    if (flag) {
+        ext.env = System.getenv()
+        ext.gitBranch = env.GIT_BRANCH
+        String[] stringArray = ext.gitBranch.split("/")
+        if (stringArray.length > 0) {
+            return stringArray[stringArray.length - 1]
+        } else {
+            return "UnKnown Branch"
+        }
+    } else {
+        return 'git symbolic-ref --short -q HEAD'.execute().text.trim()
+    }
+}
+
+
+/**
+ * 获取Git 版本号
+ */
+def getGitSHA() {
+    return 'git rev-parse --short HEAD'.execute().text.trim()
+}
+
+/**
+ * 获取Git Tag
+ */
+def getGitTag() {
+    return 'git describe --tags'.execute([], project.rootDir).text.trim()
+}
+
+/**
+ * 获取Git 提交次数
+ */
+def getGitCommitCount() {
+    return 100 + Interger.parse('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
+}
+
+/**
+ * 判断是否有jenkins
+ */
+boolean isInJenkins() {
+    Map<String, String> map = System.getenv()
+    if (map == null) {
+        return false
+    }
+    String str = map.get("Path")
+    if (str != null) {
+        //it's windows
+        return false
+    } else {
+        str = ""
+        Iterator it = map.iterator()
+        while (it.hasNext()) {
+            str += it.next()
+        }
+        return str.contains("jenkins")
+    }
+}
+/**
+ * 获取jenkins任务名
+ */
+def getJenkinsName() {
+    boolean flag = isInJenkins()
+    if (flag) {
+        ext.env = System.getenv()
+        ext.name = env.JOB_URL
+        String[] stringArray = ext.name.split("/")
+        if (stringArray.length > 0) {
+            return stringArray[stringArray.length - 1]
+        } else {
+            return "Local"
+        }
+    } else {
+        return "Local"
+    }
+}
+
+/**
+ * 获取Jenkins Build 号
+ * @return
+ */
+def getJenkinsBuildCode() {
+    boolean flag = isInJenkins()
+    if (flag) {
+        ext.env = System.getenv()
+        ext.buildNumber = env.BUILD_NUMBER?.toInteger()
+        return "$buildNumber"
+    } else {
+        return 0
+    }
+}
+
+/**
+ * 定义几个变量，在build.gradle里面引用
+ */
+ext {
+    gitTag = getGitTag()
+    gitBranch = getGitBranch()
+    gitSHA = getGitSHA()
+    jenkinsRevision = getJenkinsBuildCode()
+    jenkinsName = getJenkinsName()
+}

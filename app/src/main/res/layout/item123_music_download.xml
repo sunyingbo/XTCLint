@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="82px"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/iv_download_downloading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:gravity="center"
+        android:layout_marginLeft="4px"
+        android:layout_marginRight="10px"
+        android:layout_centerVertical="true"
+        android:visibility="visible"
+        />
+
+    <TextView
+        android:id="@+id/tv_download_song_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/iv_download_downloading"
+        android:layout_marginRight="4px"
+        android:gravity="left"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textSize="30px" />
+</RelativeLayout>
+
+    <!--android:ellipsize="end"-->

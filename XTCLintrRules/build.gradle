@@ -1,0 +1,44 @@
+//java项目，该项目编译之后生成  XTCLintRules.jar
+
+apply plugin: 'java'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // 依赖于lint的规则的api
+    compile 'com.android.tools.lint:lint-api:25.0.0'
+    compile 'com.android.tools.lint:lint-checks:25.0.0'
+    testCompile 'com.android.tools.lint:lint-tests:24.5.0'
+}
+
+/**
+ * Lint-Registry是透露给lint工具的注册类的方法，
+ * 也就是PermissionIssueRegistry是lint工具的入口,同时也通过这个方法进行打jar包
+ */
+jar{
+    manifest{
+        attributes('Lint-Registry': 'com.xtc.lint.rules.XTCIssueRegister')
+    }
+}
+
+// 创建了一个叫“lintJarOutput”的Gradle configuration，
+// 用于输出我们生成的jar包。在生成aar的模块 "XTCLintAAR" 的build.gradle中会引用此configuration。
+configurations {
+    lintJarOutput
+}
+
+// 指定定义方法lintJarOutput的作用，此处是获得调用jar方法后的生成的jar包
+dependencies {
+    lintJarOutput files(jar)
+}
+
+defaultTasks 'assemble'
+
+//指定编译使用JDK1.8
+//sourceCompatibility = JavaVersion.VERSION_1_8
+//targetCompatibility = JavaVersion.VERSION_1_8
+
+//指定编译的编码
+tasks.withType(JavaCompile){
+    options.encoding = "UTF-8"
+}

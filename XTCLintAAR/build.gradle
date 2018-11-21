@@ -1,0 +1,78 @@
+apply plugin: 'com.android.library'
+
+apply from: 'maven_upload.gradle'
+apply from: '../jenkins.gradle'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField 'String', 'JenkinsName', "\"" + jenkinsName + "\""
+            buildConfigField 'String', 'JenkinsRevision', "\"" + jenkinsRevision + "\""
+            buildConfigField 'String', 'GitSHA', "\"" + gitSHA  + "\""
+            buildConfigField 'String', 'GitBranch', "\"" + gitBranch + "\""
+            buildConfigField 'String', 'GitTag', "\"" + gitTag + "\""
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            buildConfigField 'String', 'JenkinsName', "\"" + jenkinsName + "\""
+            buildConfigField 'String', 'JenkinsRevision', "\"" + jenkinsRevision + "\""
+            buildConfigField 'String', 'GitSHA', "\"" + gitSHA  + "\""
+            buildConfigField 'String', 'GitBranch', "\"" + gitBranch + "\""
+            buildConfigField 'String', 'GitTag', "\"" + gitTag + "\""
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+
+/**
+ * 定义方法lintJarImport,引入 XTCLintRules.jar
+ *
+ * rules for including "lint.jar" in aar
+ */
+configurations {
+    lintJarImport
+}
+
+// 链接到lintJar中的lintJarOutput方法,调用jar方法，并获得jar包
+dependencies {
+    //其引用了模块 “:XTCLintRules”的 Gradle configuration “lintJarOutput”。
+    lintJarImport project(path: ':XTCLintrRules', configuration: "lintJarOutput")
+}
+
+// 将得到的JAR包复制到目录build/intermediates/lint/下，并且重命名为 lint.jar
+task copyLintJar(type: Copy) {
+    from(configurations.lintJarImport) {
+        rename {
+            String fileName ->
+                'lint.jar'
+        }
+    }
+    into 'build/intermediates/lint/'
+}
+
+// 当项目build到compileLint这一步时执行copyLintJar方法
+project.afterEvaluate {
+    def compileLintTask = project.tasks.find { it.name == 'compileLint' }
+    //对内置的Gradle task “compileLint”做了修改，让其依赖于我们定义的一个task “copyLintJar”。
+    compileLintTask.dependsOn(copyLintJar)
+}

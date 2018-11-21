@@ -1,0 +1,27 @@
+apply plugin: 'groovy'
+
+apply from: 'maven_upload.gradle'
+apply from: '../jenkins.gradle'
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile 'com.android.tools.build:gradle:2.2.3'
+}
+
+//指定编译的编码
+tasks.withType(JavaCompile){
+    options.encoding = "UTF-8"
+}
+
+//添加额外的信息
+//jar {
+//    manifest {
+//        attributes 'Implementation-Title': 'XTC Build Check plugin',
+//                'Implementation-Version': version,
+//                'Built-By': System.getProperty('user.name'),
+//                'Built-Date': new Date(),
+//                'Built-JDK': System.getProperty('java.version'),
+//                'Built-Gradle': gradle.gradleVersion
+//    }
+//}

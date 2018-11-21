@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <!--<issue id="XTC_LogUseError" severity="ignore"/>-->
+    <!--<issue id="XTC_ToastUseError" severity="error"/>-->
+    <!--<issue id="HardcodedText" severity="error"/>-->
+</lint>

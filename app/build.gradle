@@ -1,0 +1,53 @@
+apply plugin: 'com.android.application'
+
+//小天才自定义的Lint插件
+apply plugin: 'XTCLintPlugin'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+    defaultConfig {
+        applicationId "com.xtc.lint"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+android {
+    //参考链接：
+    //https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.LintOptions.html#com.android.build.gradle.internal.dsl.LintOptions:quiet
+    lintOptions {
+        textReport true // 输出lint报告
+        abortOnError false  // 遇到错误不停止
+
+        //可以使用下面的方法来改变相关的Issue的优先级别
+        //包括 check() disable() enable() error() fatal() ignore() warning()等几个方法
+
+        //error('XTC_LogUseError','XTC_ToastUseError')
+        //warning('XTC_CloseError')
+    }
+}
+
+configurations {
+    lintChecks
+}
+
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
+
+    //加载lint检测的AAR
+//    compile project(':XTCLintAAR')
+//    compile 'com.xtc.lint:lint-check:1.0.50-Dev'
+}

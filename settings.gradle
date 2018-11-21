@@ -1,0 +1,7 @@
+include ':app', ':XTCLintrRules',':XTCLintPlugin'
+
+//plugin上传一次之后，基本上不会在变了，所以不编译
+//,':XTCLintPlugin'
+
+//,':XTCLintAAR'
+

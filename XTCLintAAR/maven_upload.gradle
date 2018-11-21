@@ -1,0 +1,119 @@
+apply plugin: 'maven'
+
+apply from: '../jenkins.gradle'
+
+//读取第一个配置文件 maven_user.properties
+Properties user_properties = new Properties()
+user_properties.load(project.rootProject.file('maven_user.properties').newDataInputStream())
+def releaseRepoUrl = user_properties.getProperty("repository.url.release")
+def betaRepoUrl = user_properties.getProperty("repository.url.beta")
+def devRepoUrl = user_properties.getProperty("repository.url.dev")
+def userName = user_properties.getProperty("repository.user")
+def userPassword = user_properties.getProperty("repository.password")
+
+//读取第二个配置文件 maven_pom.properties
+Properties pom_properties = new Properties()
+pom_properties.load(project.file('maven_pom.properties').newDataInputStream())
+def pom_name = pom_properties.getProperty("POM_NAME")
+def pom_description = pom_properties.getProperty("POM_DESCRIPTION")
+def pom_group = pom_properties.getProperty("POM_GROUP")
+def pom_artifact_id = pom_properties.getProperty("POM_ARTIFACT_ID")
+def pom_packaging = pom_properties.getProperty("POM_PACKAGING")
+def pom_version_type = pom_properties.getProperty("POM_VERSION_TYPE")
+def pom_version_release = pom_properties.getProperty("POM_VERSION_RELEASE")
+def pom_version_dev = pom_properties.getProperty("POM_VERSION_DEV")
+def pom_version_beta = pom_properties.getProperty("POM_VERSION_BETA")
+def repoUrl
+def pom_version
+
+if (pom_version_type.equals("DEV")) {
+    repoUrl = devRepoUrl
+    pom_version = pom_version_dev
+} else if (pom_version_type.equals("BETA")) {
+    repoUrl = betaRepoUrl
+    pom_version = pom_version_beta
+} else if (pom_version_type.equals("RELEASE")) {
+    repoUrl = releaseRepoUrl
+    pom_version = pom_version_release
+} else {
+    throw Exception(">>>>>>>>>>>>>>上传失败，POM_VERSION_TYPE = " + pom_version_type + " ,请确认maven_user.properties文件中 POM_VERSION_TYPE 参数填写正确，POM版本必须为（DEV、BETA、RELEASE）中的一种类型<<<<<<<<<<");
+}
+
+println "pom_version_type = " + pom_version_type
+println "jenkinsName = " + jenkinsName
+println "gitBranch = " + gitBranch
+println "pom_version = " + pom_version
+println "repoUrl = " + repoUrl + "\n"
+
+uploadArchives {
+    repositories.mavenDeployer {
+        beforeDeployment{
+            //如果上传RELEASE版本，必须使用Jenkins编译
+            if (pom_version_type.equals("RELEASE")) {
+                //如果不是Jenkins编译，而是本地编译的话，直接抛出异常
+                if (jenkinsName.equals("Local")) {
+                    throw Exception(">>>>>>>>>>>>>>编译失败，POM_VERSION_TYPE = " + pom_version_type + " ,如果要上传RELEASE版本，必须使用Jenkins编译！！<<<<<<<<<<");
+                }
+                //如果不是master分支编译的话，直接抛出异常
+                if (!gitBranch.equals("master")) {
+                    throw Exception(">>>>>>>>>>>>>>编译失败，gitBranch = " + gitBranch + " , ,如果要上传RELEASE版本，必须使用master分支编译！！<<<<<<<<<<");
+                }
+            }
+        }
+
+        repository(url: repoUrl) {
+            authentication(userName: userName,
+                    password: userPassword)
+        }
+
+        pom.project {
+            name pom_name
+            description pom_description
+            url repoUrl
+            groupId pom_group
+            artifactId pom_artifact_id
+            version pom_version
+            packaging pom_packaging
+        }
+    }
+}
+
+task cleanDir(type: Delete) {
+    delete buildDir
+}
+
+// type显示指定任务类型或任务, 这里指定要执行Javadoc这个task,这个task在gradle中已经定义
+task androidJavadocs(type: Javadoc) {
+    // 设置源码所在的位置
+    source = android.sourceSets.main.java.sourceFiles
+}
+
+// 生成javadoc.jar
+task androidJavadocsJar(type: Jar) {
+    // 指定文档名称
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+// 生成sources.jar
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.sourceFiles
+}
+
+//是否是开发版本
+def isDevOrBetaBuild(String version) {
+    if (version == null || version.isEmpty()) {
+        throw Exception(">>>>>>>>>>>>>>编译失败，POM_VERSION_TYPE = " + pom_version_type + " ,请确认maven_user.properties文件中 POM_VERSION_TYPE 参数填写正确，POM版本必须为（DEV、BETA、RELEASE）中的一种类型<<<<<<<<<<");
+    }
+    return version.contains("Dev") || version.contains("Beta")
+}
+
+artifacts {
+    if (isDevOrBetaBuild(pom_version)) {
+        archives androidSourcesJar
+        archives androidJavadocsJar
+    }
+}
+
+uploadArchives.mustRunAfter 'cleanDir'
