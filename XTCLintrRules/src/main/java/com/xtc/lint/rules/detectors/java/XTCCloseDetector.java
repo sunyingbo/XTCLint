@@ -8,7 +8,6 @@ import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
-import com.xtc.lint.rules.JavaPackageRelativePersonUtil;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -114,9 +113,8 @@ public class XTCCloseDetector extends Detector implements Detector.JavaScanner {
             if (fLineNum > sLineNum) {
                 return;
             } else {
-                String relativePersonName = JavaPackageRelativePersonUtil.getPackageRelativePerson(context,node);
 //                System.out.println("XTCCloseDetector 出现lint检测项，对应的责任人为： " + relativePersonName);
-                String message = ISSUE_DESCRIPTION + " ,请 【" + relativePersonName + "】速度修改";
+                String message = ISSUE_DESCRIPTION + " ,请速度修改";
                 context.report(ISSUE, node, context.getLocation(node), message);
             }
         }

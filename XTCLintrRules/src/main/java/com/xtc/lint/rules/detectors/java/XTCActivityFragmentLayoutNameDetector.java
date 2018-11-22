@@ -13,7 +13,6 @@ import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
-import com.xtc.lint.rules.JavaPackageRelativePersonUtil;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -115,9 +114,8 @@ public class XTCActivityFragmentLayoutNameDetector extends Detector
 
             String layoutString = argument.toString();
             if (!isFileStringStartWithPrefix(layoutString, "activity_")) {
-                String relativePersonName = JavaPackageRelativePersonUtil.getPackageRelativePerson(context,node);
 //                System.out.println("lintCheckMethodSetContentViewInActivity () 出现lint检测项，对应的责任人为： " + relativePersonName);
-                String message = ISSUE_ACTIVITY_DESCRIPTION + " ,请 【" + relativePersonName + "】速度修改";
+                String message = ISSUE_ACTIVITY_DESCRIPTION + " ,请速度修改";
                 context.report(ACTIVITY_LAYOUT_NAME_ISSUE,
                         node,
                         context.getLocation(node),
@@ -137,9 +135,8 @@ public class XTCActivityFragmentLayoutNameDetector extends Detector
             }
 
             if (!isFileStringStartWithPrefix(layoutString, "fragment_")) {
-                String relativePersonName = JavaPackageRelativePersonUtil.getPackageRelativePerson(context,node);
 //                System.out.println("lintCheckMethodInflateInFragment () 出现lint检测项，对应的责任人为： " + relativePersonName);
-                String message = ISSUE_FRAGMENT_DESCRIPTION + " ,请 【" + relativePersonName + "】速度修改";
+                String message = ISSUE_FRAGMENT_DESCRIPTION + " ,请速度修改";
                 context.report(FRAGMENT_LAYOUT_NAME_ISSUE,
                         node,
                         context.getLocation(node),

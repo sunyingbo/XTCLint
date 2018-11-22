@@ -8,7 +8,6 @@ import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
-import com.xtc.lint.rules.JavaPackageRelativePersonUtil;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -88,9 +87,8 @@ public class XTCCustomLogDetector extends Detector implements Detector.JavaScann
                     || nodeString.startsWith(SYSTEM_OUT_PRINTLN)
                     || nodeString.startsWith(SYSTEM_ERR_PRINT)
                     || nodeString.startsWith(SYSTEM_ERR_PRINTLN)) {
-                String relativePersonName = JavaPackageRelativePersonUtil.getPackageRelativePerson(javaContext,node);
 //                System.out.println("LogVisit visitMethodInvocation() 出现lint检测项，对应的责任人为： " + relativePersonName);
-                String message = ISSUE_DESCRIPTION + " ,请 【" + relativePersonName + "】速度修改";
+                String message = ISSUE_DESCRIPTION + " ,请速度修改";
                 javaContext.report(ISSUE, node, javaContext.getLocation(node), message);
                 return true;
             }
@@ -110,9 +108,8 @@ public class XTCCustomLogDetector extends Detector implements Detector.JavaScann
                     if (containingClass.matches(CHECK_PACKAGE)) {
 //                      System.out.println("XTCCustomLogDetector  called method  one of { v,d,i,w,e,wtf } , and the className is : android.util.Log");
 
-                        String relativePersonName = JavaPackageRelativePersonUtil.getPackageRelativePerson(javaContext,node);
 //                        System.out.println("LogVisit visitMethodInvocation() 出现lint检测项，对应的责任人为： " + relativePersonName);
-                        String message = ISSUE_DESCRIPTION + " ,请 【" + relativePersonName + "】速度修改";
+                        String message = ISSUE_DESCRIPTION + " ,请速度修改";
                         javaContext.report(ISSUE, node, javaContext.getLocation(node),
                                 message);
                         return true;

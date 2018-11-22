@@ -9,7 +9,6 @@ import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
-import com.xtc.lint.rules.JavaPackageRelativePersonUtil;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -76,9 +75,8 @@ public class XTCMessageObtainDetector extends Detector implements Detector.JavaS
             JavaParser.ResolvedNode resolvedType = javaContext.resolve(node.astTypeReference());
             JavaParser.ResolvedClass resolvedClass = (JavaParser.ResolvedClass) resolvedType;
             if (resolvedClass != null && resolvedClass.isSubclassOf(PACKAGE_NAME, false)) {
-                String relativePersonName = JavaPackageRelativePersonUtil.getPackageRelativePerson(javaContext,node);
 //                System.out.println("XTCMessageObtainDetector visitConstructorInvocation() 出现lint检测项，对应的责任人为： " + relativePersonName);
-                String message = ISSUE_DESCRIPTION + " ,请 【" + relativePersonName + "】速度修改";
+                String message = ISSUE_DESCRIPTION + " ,请速度修改";
                 javaContext.report(ISSUE, node, javaContext.getLocation(node),message);
                 return true;
             }

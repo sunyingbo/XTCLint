@@ -8,7 +8,6 @@ import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
-import com.xtc.lint.rules.JavaPackageRelativePersonUtil;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -84,9 +83,8 @@ public class XTCCustomToastDetector extends Detector implements Detector.JavaSca
                 JavaParser.ResolvedMethod method = (JavaParser.ResolvedMethod) resolve;
                 JavaParser.ResolvedClass containingClass = method.getContainingClass();
                 if (containingClass.matches(CHECK_PACKAGE)) {
-                    String relativePersonName = JavaPackageRelativePersonUtil.getPackageRelativePerson(javaContext,node);
 //                    System.out.println("CusTomToastVisitor visitMethodInvocation() 出现lint检测项，对应的责任人为： " + relativePersonName);
-                    String message = ISSUE_DESCRIPTION + " ,请 【" + relativePersonName + "】速度修改";
+                    String message = ISSUE_DESCRIPTION + " ,请速度修改";
                     javaContext.report(ISSUE, node, javaContext.getLocation(node),message);
                     return true;
                 }

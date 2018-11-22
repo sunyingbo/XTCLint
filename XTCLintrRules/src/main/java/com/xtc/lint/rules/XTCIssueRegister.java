@@ -19,13 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class XTCIssueRegister extends IssueRegistry {
-    static {
-        System.out.println("***************************************************");
-        System.out.println("**************** lint 读取配置文件 *****************");
-        System.out.println("***************************************************");
-        LoadPropertiesFile.loadPropertiesFile();
-    }
-
     @Override
     public List<Issue> getIssues() {
         System.out.println("***************************************************");

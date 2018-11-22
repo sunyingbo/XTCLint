@@ -9,7 +9,6 @@ import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
-import com.xtc.lint.rules.JavaPackageRelativePersonUtil;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -136,9 +135,8 @@ public class XTCHashMapForJDK7Detector extends Detector implements Detector.Java
             String valueType = m.group(2).trim();
             int minSdk = context.getMainProject().getMinSdk();
 
-            String relativePersonName = JavaPackageRelativePersonUtil.getPackageRelativePerson(context,node);
 //            System.out.println("XTCHashMapForJDK7Detector checkCore2() 出现lint检测项，对应的责任人为： " + relativePersonName);
-            String appendMessage = " ,请 【" + relativePersonName + "】速度修改";
+            String appendMessage = " ,请速度修改";
             if (typeName.equals(INTEGER) || typeName.equals(BYTE)) {
                 if (valueType.equals(INTEGER)) {
                     context.report(ISSUE, node, context.getLocation(node),
@@ -179,9 +177,8 @@ public class XTCHashMapForJDK7Detector extends Detector implements Detector.Java
             String typeName = first.getTypeName();
             int minSdk = context.getMainProject().getMinSdk();
 
-            String relativePersonName = JavaPackageRelativePersonUtil.getPackageRelativePerson(context,node);
 //            System.out.println("XTCHashMapForJDK7Detector checkCore() 出现lint检测项，对应的责任人为： " + relativePersonName);
-            String appendMessage = " ,请 【" + relativePersonName + "】速度修改";
+            String appendMessage = " ,请速度修改";
 
             if (typeName.equals(INTEGER) || typeName.equals(BYTE)) {
                 String valueType = types.last().getTypeName();
